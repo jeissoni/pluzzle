@@ -10,9 +10,14 @@ let contractB
 let contractC
 let contractD
 let contractE
-//let owner;
+
+let owner;
+let addr1;
+
 
 beforeEach(async function(){
+
+    [owner, addr1] = await ethers.getSigners();
 
     const factoryA = await ethers.getContractFactory("A");  
     const factoryB = await ethers.getContractFactory("B");  
@@ -26,11 +31,12 @@ beforeEach(async function(){
     contractD = await factoryD.deploy();   
     contractE = await factoryE.deploy();   
 
-    await contractA.deployed();
-    await contractB.deployed();
-    await contractC.deployed();
-    await contractD.deployed();
-    await contractE.deployed();
+   
+    // await contractA.deployed();
+    // await contractB.deployed();
+    // await contractC.deployed();
+    // await contractD.deployed();
+    // await contractE.deployed();
 
 });
 
@@ -39,14 +45,14 @@ describe("pluzzle", function () {
 
     it("Pruebas de sender", async function () {
 
-        [owner, addr1] = await ethers.getSigners();
+        
 
         // console.log("A--> "+contractA.address.toString())
-        // console.log("B--> "+contractB.address.toString())
-        // console.log("C--> "+contractC.address.toString())
-        // console.log("D--> "+contractD.address.toString())
-        // console.log("E--> "+contractE.address.toString())
-        // console.log("Owner--> "+owner.address.toString())    
+        //  console.log("B--> "+contractB.address.toString())
+        //  console.log("C--> "+contractC.address.toString())
+        //  console.log("D--> "+contractD.address.toString())
+        //  console.log("E--> "+contractE.address.toString())
+        console.log("Owner--> "+owner.address.toString())    
 
         // console.log((await contractB.sender()).toString());
 
@@ -56,20 +62,25 @@ describe("pluzzle", function () {
 
         // console.log((await contractB.sender()).toString());
 
+        //await stateMachine.connect(userTwo).sign();
 
+        //console.log("1 " + (await contractA.sender()).toString())
+        try {
+            let [uno, dos] = await contractA.connect(owner).callB(
+                contractB.address,
+                contractC.address,
+                contractD.address,
+                contractE.address)
+        } catch (error) {
+            console.log(error)
+        }
+      
 
-        // let [uno, dos] = await contractA.callB(
-        //     contractB.address,
-        //     contractC.address,
-        //     contractE.address,
-        //     contractD.address, {from: owner.address})
+        //console.log("2 " + (await contractA.sender()).toString())
 
+        
 
-        await contractA.setContract(contractB.address, {
-            from: owner.address
-        });
-
-        console.log("contrato llega " + (await contractB.contratoNuevo()).toString())
+        //console.log("contrato llega " + (await contractB.contratoNuevo()).toString())
 
     });
 

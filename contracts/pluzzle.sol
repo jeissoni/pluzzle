@@ -9,82 +9,74 @@ import "hardhat/console.sol";
 
 
 contract E {
-    address public sender;
-    
     function callA(address a) public returns(bool, bytes memory) {
-        return address(a).delegatecall(
+        console.log("A");
+
+        (bool success, bytes memory data) = a.delegatecall(
             abi.encodeWithSignature("setSender()")
         );
+        return (success, data);
     }
 }
 
 contract D {
-    address public sender;
-    
     function callE(address e, address a) public returns(bool, bytes memory) {
-        return address(e).delegatecall(
+            console.log("D");
+
+        (bool success, bytes memory data) = e.delegatecall(
             abi.encodeWithSignature("callA(address)", a)
         );
+        return (success, data);
     }
 }
 
 contract C {
-    address public sender;
-    
     function callD(address d, address e, address a) public returns(bool, bytes memory) {
-        return address(d).call(
+            console.log("C");
+
+        (bool success, bytes memory data) = d.delegatecall(
             abi.encodeWithSignature("callE(address,address)", e, a)
         );
+        return (success, data);
     }
 }
 
 contract B {
-    address public sender;
-    address public contratoNuevo;
-    
     function callC(address c, address d, address e, address a) public returns(bool, bytes memory) {
-        return address(c).delegatecall(
+        console.log("B");
+        
+        (bool success, bytes memory data) = c.delegatecall(
             abi.encodeWithSignature("callD(address,address,address)", d, e, a)
         ); 
+        return (success, data);
     }
-    
-    function setContract(address contractAddress) public 
-    {
-        console.log("contrato B", contractAddress);         
-        contratoNuevo = contractAddress;
-        console.log("addres ", contratoNuevo);
-    }
-
-     function setSender() public {
-        sender = msg.sender;
-    }
-
 }
 
 contract A {
-    address public sender;       
-
+    address public sender;   
+    
     function setSender() public {
+        console.log(msg.sender);
         sender = msg.sender;
     }
     
-    function callB(address b, address c, address e, address d) public returns(bool, bytes memory){
-        return b.delegatecall(
+    function callB(address b, address c, address d, address e) public returns(bool, bytes memory){
+        
+        console.log("b => ", address(this) );
+        console.log("b => ",b );
+        console.log("c => ",c );
+        console.log("d => ",d );
+        console.log("e => ",e );
+                    
+        (bool success, bytes memory data) = address(b).delegatecall(
             abi.encodeWithSignature(
                 "callC(address,address,address,address)", 
-                c,
-                d,
-                e,
+                address(c),
+                address(d),
+                address(e),
                 address(this)
             )
         );
+        return (success, data);
     }
-
-    function setContract(address b) public returns (bool, bytes memory) {        
-        return b.delegatecall(
-            abi.encodeWithSignature(
-                "setContract(address)", msg.sender)
-        );
-    }
-
 }
